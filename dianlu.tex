@@ -1,0 +1,1268 @@
+% 若编译失败，且生成 .synctex(busy) 辅助文件，可能有两个原因：
+% 1. 需要插入的图片不存在：Ctrl + F 搜索 'figure' 将这些代码注释/删除掉即可
+% 2. 路径/文件名含中文或空格：更改路径/文件名即可
+
+% ------------------------------------------------------------- %
+% >> ------------------ 文章宏包及相关设置 ------------------ << %
+% 设定文章类型与编码格式
+\documentclass[UTF8]{report}		
+
+% 本文特殊宏包
+    \usepackage{siunitx} % 埃米单位
+
+% 本文的特殊宏定义
+\def\Im{\mathrm{\,Im\,}}
+\def\Re{\mathrm{\,Re\,}}
+\def\Ln{\mathrm{\,Ln\,}}
+\def\Arg{\mathrm{\,Arg\,}}
+\def\Arccos{\mathrm{\,Arccos\,}}
+\def\Arcsin{\mathrm{\,Arcsin\,}}
+\def\Arctan{\mathrm{\,Arctan\,}}
+
+% 通用宏定义
+\def\N{\mathbb{N}}
+\def\F{\mathbb{F}}
+\def\Z{\mathbb{Z}}
+\def\Q{\mathbb{Q}}
+\def\R{\mathbb{R}}
+\def\C{\mathbb{C}}
+\def\T{\mathbb{T}}
+\def\S{\mathbb{S}}
+\def\A{\mathbb{A}}
+\def\I{\mathscr{I}}
+\def\d{\mathrm{d}}
+\def\p{\partial}
+
+
+% 导入基本宏包
+    \usepackage[UTF8]{ctex}     % 设置文档为中文语言
+    \usepackage[colorlinks, linkcolor=blue, anchorcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}  % 宏包：自动生成超链接 (此宏包与标题中的数学环境冲突)
+    % \usepackage{docmute}    % 宏包：子文件导入时自动去除导言区，用于主/子文件的写作方式，\include{./51单片机笔记}即可。注：启用此宏包会导致.tex文件capacity受限。
+    \usepackage{amsmath}    % 宏包：数学公式
+    \usepackage{mathrsfs}   % 宏包：提供更多数学符号
+    \usepackage{amssymb}    % 宏包：提供更多数学符号
+    \usepackage{pifont}     % 宏包：提供了特殊符号和字体
+    \usepackage{extarrows}  % 宏包：更多箭头符号
+    \usepackage{multicol}   % 宏包：支持多栏 
+    \usepackage{graphicx}   % 宏包：插入图片
+    \usepackage{float}      % 宏包：设置图片浮动位置
+    %\usepackage{article}    % 宏包：使文本排版更加优美
+    \usepackage{tikz}       % 宏包：绘图工具
+    %\usepackage{pgfplots}   % 宏包：绘图工具
+    \usepackage{enumerate}  % 宏包：列表环境设置
+    \usepackage{enumitem}   % 宏包：列表环境设置
+
+% 文章页面margin设置
+    \usepackage[a4paper]{geometry}
+        \geometry{top=1in}  % 1 inch= 2.46 cm, 0.75 inch = 1.85 cm
+        \geometry{bottom=1in}
+        \geometry{left=0.75in}
+        \geometry{right=0.75in}   % 设置上下左右页边距
+        \geometry{marginparwidth=1.75cm}    % 设置边注距离（注释、标记等）
+
+% 配置数学环境
+    \usepackage{amsthm} % 宏包：数学环境配置
+    % theorem-line 环境自定义
+        \newtheoremstyle{MyLineTheoremStyle}% <name>
+            {11pt}% <space above>
+            {11pt}% <space below>
+            {}% <body font> 使用默认正文字体
+            {}% <indent amount>
+            {\bfseries}% <theorem head font> 设置标题项为加粗
+            {：}% <punctuation after theorem head>
+            {.5em}% <space after theorem head>
+            {\textbf{#1}\thmnumber{#2}\ \ (\,\textbf{#3}\,)}% 设置标题内容顺序
+        \theoremstyle{MyLineTheoremStyle} % 应用自定义的定理样式
+        \newtheorem{LineTheorem}{Theorem.\,}
+    % theorem-block 环境自定义
+        \newtheoremstyle{MyBlockTheoremStyle}% <name>
+            {11pt}% <space above>
+            {11pt}% <space below>
+            {}% <body font> 使用默认正文字体
+            {}% <indent amount>
+            {\bfseries}% <theorem head font> 设置标题项为加粗
+            {：\\ \indent}% <punctuation after theorem head>
+            {.5em}% <space after theorem head>
+            {\textbf{#1}\thmnumber{#2}\ \ (\,\textbf{#3}\,)}% 设置标题内容顺序
+        \theoremstyle{MyBlockTheoremStyle} % 应用自定义的定理样式
+        \newtheorem{BlockTheorem}[LineTheorem]{Theorem.\,} % 使用 LineTheorem 的计数器
+    % definition 环境自定义
+        \newtheoremstyle{MySubsubsectionStyle}% <name>
+            {11pt}% <space above>
+            {11pt}% <space below>
+            {}% <body font> 使用默认正文字体
+            {}% <indent amount>
+            {\bfseries}% <theorem head font> 设置标题项为加粗
+            { \indent}% <punctuation after theorem head>
+            {0pt}% <space after theorem head>
+            {\textbf{#3}}% 设置标题内容顺序
+        \theoremstyle{MySubsubsectionStyle} % 应用自定义的定理样式
+        \newtheorem{definition}{}
+
+%宏包：有色文本框（proof环境）及其设置
+    \usepackage[dvipsnames,svgnames]{xcolor}    %设置插入的文本框颜色
+    \usepackage[strict]{changepage}     % 提供一个 adjustwidth 环境
+    \usepackage{framed}     % 实现方框效果
+        \definecolor{graybox_color}{rgb}{0.95,0.95,0.96} % 文本框颜色。修改此行中的 rgb 数值即可改变方框纹颜色，具体颜色的rgb数值可以在网站https://colordrop.io/ 中获得。（截止目前的尝试还没有成功过，感觉单位不一样）（找到喜欢的颜色，点击下方的小眼睛，找到rgb值，复制修改即可）
+        \newenvironment{graybox}{%
+        \def\FrameCommand{%
+        \hspace{1pt}%
+        {\color{gray}\small \vrule width 2pt}%
+        {\color{graybox_color}\vrule width 4pt}%
+        \colorbox{graybox_color}%
+        }%
+        \MakeFramed{\advance\hsize-\width\FrameRestore}%
+        \noindent\hspace{-4.55pt}% disable indenting first paragraph
+        \begin{adjustwidth}{}{7pt}%
+        \vspace{2pt}\vspace{2pt}%
+        }
+        {%
+        \vspace{2pt}\end{adjustwidth}\endMakeFramed%
+        }
+
+% 外源代码插入设置
+    % matlab 代码插入设置
+    %\usepackage{matlab-prettifier}
+    %    \lstset{
+    %        style=Matlab-editor,  % 继承matlab代码颜色等
+    %    }
+    %\usepackage[most]{tcolorbox} % 引入tcolorbox包 
+    %\usepackage{listings} % 引入listings包
+    %    \tcbuselibrary{listings, skins, breakable}
+    %    \newfontfamily\codefont{Consolas} % 定义需要的 codefont 字体
+    %    \lstdefinestyle{matlabstyle}{
+    %        language=Matlab,
+    %        basicstyle=\small\ttfamily\codefont,    % ttfamily 确保等宽 
+    %        breakatwhitespace=false,
+    %        breaklines=true,
+    %        captionpos=b,
+    %        keepspaces=true,
+    %        numbers=left,
+    %        numbersep=15pt,
+    %        showspaces=false,
+    %        showstringspaces=false,
+    %        showtabs=false,
+    %        tabsize=2
+    %    }
+    %    \newtcblisting{matlablisting}{
+    %        arc=2pt,        % 圆角半径
+    %        top=-5pt,
+    %        bottom=-5pt,
+    %        left=1mm,
+    %        listing only,
+    %        listing style=matlabstyle,
+    %        breakable,
+    %        colback=white   % 选一个合适的颜色
+    %    }
+% table 支持
+    \usepackage{booktabs}   % 宏包：三线表
+    \usepackage{tabularray} % 宏包：表格排版
+    \usepackage{longtable}  % 宏包：长表格
+
+
+%figure 设置
+%    \usepackage{graphicx}  % 支持 jpg, png, eps, pdf 图片 
+%    \usepackage{svg}       % 支持 svg 图片
+%        \svgsetup{
+%             指向 inkscape.exe 的路径
+%            inkscapeexe = C:/aa_MySame/inkscape/bin/inkscape.exe, 
+%            inkscapeexe = C:/aa_MySame/inkscape/bin/inkscape.exe, 
+%             一定程度上修复导入后图片文字溢出几何图形的问题
+%            inkscapelatex = false                 
+%        }
+%    \usepackage{subcaption} % subfigure 子图支持
+
+%图表进阶设置
+%    \usepackage{caption}    % 图注、表注
+%        \captionsetup[figure]{name=图}  
+%        \captionsetup[table]{name=表}
+%        \captionsetup{labelfont=bf, font=small}
+%    \usepackage{float}     % 图表位置浮动设置 
+
+% 圆圈序号自定义
+    \newcommand*\circled[1]{\tikz[baseline=(char.base)]{\node[shape=circle,draw,inner sep=0.8pt, line width = 0.03em] (char) {\small \bfseries #1};}}   % TikZ solution
+
+% 列表设置
+%    \usepackage{enumitem}   % 宏包：列表环境设置
+%        \setlist[enumerate]{itemsep=0pt, parsep=0pt, topsep=0pt, partopsep=0pt, leftmargin=3.5em} 
+%        \setlist[itemize]{itemsep=0pt, parsep=0pt, topsep=0pt, partopsep=0pt, leftmargin=3.5em}
+%        \newlist{circledenum}{enumerate}{1} % 创建一个新的枚举环境  
+%        \setlist[circledenum,1]{  
+%            label=\protect\circled{\arabic*}, % 使用 \arabic* 来获取当前枚举计数器的值，并用 \circled 包装它  
+%            ref=\arabic*, % 如果需要引用列表项，这将决定引用格式（这里仍然使用数字）
+%            itemsep=0pt, parsep=0pt, topsep=0pt, partopsep=0pt, leftmargin=3.5em
+%        }  
+
+% 其它设置
+    % 脚注设置
+        \renewcommand\thefootnote{\ding{\numexpr171+\value{footnote}}}
+    % 参考文献引用设置
+        \bibliographystyle{unsrt}   % 设置参考文献引用格式为unsrt
+        \newcommand{\upcite}[1]{\textsuperscript{\cite{#1}}}     % 自定义上角标式引用
+    % 文章序言设置
+        \newcommand{\cnabstractname}{序言}
+        \newenvironment{cnabstract}{%
+            \par\Large
+            \noindent\mbox{}\hfill{\bfseries \cnabstractname}\hfill\mbox{}\par
+            \vskip 2.5ex
+            }{\par\vskip 2.5ex}
+
+% 文章默认字体设置
+    \usepackage{fontspec}   % 宏包：字体设置
+        \setmainfont{SimSun}    % 设置中文字体为宋体字体
+        \setCJKmainfont[AutoFakeBold=3]{SimSun} % 设置加粗字体为 SimSun 族，AutoFakeBold 可以调整字体粗细
+        \setmainfont{Times New Roman} % 设置英文字体为Times New Roman
+
+% 各级标题自定义设置
+    \usepackage{titlesec}   
+        \titleformat{\chapter}[hang]{\normalfont\huge\bfseries\centering}{第\,\thechapter\,章}{20pt}{}
+        \titlespacing*{\chapter}{0pt}{-20pt}{20pt} % 控制上方空白的大小
+        % section标题自定义设置 
+        \titleformat{\section}[hang]{\normalfont\Large\bfseries}{§\,\thesection\,}{8pt}{}
+        % subsubsection标题自定义设置
+        %\titleformat{\subsubsection}[hang]{\normalfont\bfseries}{}{8pt}{}
+
+% >> ------------------ 文章宏包及相关设置 ------------------ << %
+% ------------------------------------------------------------- %
+
+% ----------------------------------------------------------- %
+% >> --------------------- 文章信息区 --------------------- << %
+% 页眉页脚设置
+    \usepackage{fancyhdr}   %宏包：页眉页脚设置
+        \pagestyle{fancy}
+        \fancyhf{}
+        \cfoot{\thepage}
+        \renewcommand\headrulewidth{1pt}
+        \renewcommand\footrulewidth{0pt}
+        \lhead{2024.8 -- 2025.1} 
+        \chead{yinchao050313@gmail.com}    
+        \rhead{yinchao23@mails.ucas.ac.cn}
+%文档信息设置
+    \title{电路分析基础}
+    \author{尹超\\ \footnotesize 中国科学院大学，北京 100049\\ Carter Yin \\ \footnotesize University of Chinese Academy of Sciences, Beijing 100049, China}
+    \date{\footnotesize 2024.8 -- 2025.1}
+% >> --------------------- 文章信息区 --------------------- << %
+% ----------------------------------------------------------- %
+
+% 开始编辑文章
+
+\begin{document} 
+\zihao{5}             % 设置全文字号大小, -4 为小四, 5 为五号
+
+% --------------------------------------------------------------- %
+% >> --------------------- 封面序言与目录 --------------------- << %
+% 封面
+    \maketitle\newpage  
+    \pagenumbering{Roman} % 页码为大写罗马数字
+    \thispagestyle{fancy}   % 显示页码、页眉等
+
+% 序言
+    \begin{cnabstract}\normalsize 
+        本笔记为电路分析基础的笔记整理\par
+        讲课教师:王丹力\par
+        助教：高玄歌\par
+\end{cnabstract}    
+\addcontentsline{toc}{chapter}{序言} % 手动添加为目录
+
+% 目录
+    \setcounter{tocdepth}{4}                % 目录深度（为1时显示到section）
+    \tableofcontents                        % 目录页
+    \addcontentsline{toc}{chapter}{目录}    % 手动添加此页为目录
+    \thispagestyle{fancy}                   % 显示页码、页眉等 
+
+% 收尾工作
+    \newpage    
+    \pagenumbering{arabic} 
+
+
+    
+% >> --------------------- 封面序言与目录 --------------------- << %
+% --------------------------------------------------------------- %
+
+\chapter{电路模型和电路定律}
+
+\section{电路和电路模型}
+
+\begin{definition}
+    \textbf{5种基本的理想电路元件}
+    \begin{itemize}
+        \item 电阻元件：表示消耗电能的元件
+        \item 电感元件：表示产生磁场，储存磁场能量的元件
+        \item 电容元件：表示产生电场，储存电场能量的元件
+        \item 电压源和电流源：表示将其它形式的能量转变成电能的元件
+    \end{itemize}
+    \textbf{注意}
+    \begin{itemize}
+        \item 5种基本理想电路元件有三个特征：
+        \begin{enumerate}[label=(\alph*)]
+            \item 只有两个端子
+            \item 可以用电压、电流按数学方式描述
+            \item 不能被分解为其他元件
+        \end{enumerate}
+    \end{itemize}
+\end{definition}
+
+\section{电流电压的参考方向}
+
+\begin{definition}
+    \textbf{基础概念}
+    \begin{itemize}
+        \item 电路中主要物理量
+        \begin{itemize}
+            \item 电流、电压、电荷、电功率、能量、磁通链等
+            \item 物理量的表达是电流($I$)、电压($U$)、电荷($Q$)、电功率($P$)、能量($W$)、磁通链($\Psi$)
+            \item 电路中电流、电压、功率等变量一般用小写字母表示 $i$，$u$，$p$
+        \end{itemize}
+        \item 线性电路分析主要关注的是电流、电压和功率
+        \begin{itemize}
+            \item 线性元件：参数与电压、电流无关的元件
+        \end{itemize}
+        \item 线性电路（linear circuit）
+        \begin{itemize}
+            \item 若描述电路特性的所有方程都是线性代数方程或微积分方程，则称这类电路是线性电路，否则为非线性电路。
+            \item 线性电路：由线性元件、独立源、线性受控源组成的电路。
+        \end{itemize}
+    \end{itemize}
+
+    \textbf{电流的参考方向}
+    \begin{enumerate}
+        \item 用箭头表示：箭头的指向为电流的参考方向
+        \item 用双下标表示：如 $i_{AB}$，电流的参考方向由A指向B。
+    \end{enumerate}
+
+    \textbf{电压的参考方向}
+    \begin{itemize}
+        \item 实际电压方向：电位真正降低的方向。
+        \item 电压参考方向的三种表示方式：
+        \begin{enumerate}
+            \item 用箭头表示：箭头的指向为电压的参考方向
+            \item 用双下标表示：如 $u_{AB}$，电压的参考方向由A指向B。
+            \item 用正负极性表示
+        \end{enumerate}
+    \end{itemize}
+
+    \textbf{关联参考方向}
+    \begin{itemize}
+        \item 元件或支路的 $u$，$i$ 采用相同的参考方向称之为关联参考方向。反之，称为非关联参考方向。
+    \end{itemize}
+\end{definition}
+
+\section{电功率和能量}
+
+\begin{definition}
+    \textbf{电功率}
+    \begin{itemize}
+        \item 概念：电功率是单位时间内电场力所做的功
+    \end{itemize}
+    \textbf{能量}
+    \begin{itemize}
+        \item 概念：从 $t_0$ 到 $t$ 元件吸收的能量
+    \end{itemize}
+
+    \textbf{电路吸收或发出功率的判断}
+    \begin{itemize}
+        \item $u$，$i$ 取关联参考方向
+        \begin{itemize}
+            \item $P = ui$ 表示元件吸收的功率
+            \item $P > 0$ 吸收正功率 (实际吸收)
+            \item $P < 0$ 吸收负功率 (实际发出)
+        \end{itemize}
+        \item $u$，$i$ 取非关联参考方向
+        \begin{itemize}
+            \item $P = ui$ 表示元件发出的功率
+            \item $P > 0$ 发出正功率 (实际发出)
+            \item $P < 0$ 发出负功率 (实际吸收)
+        \end{itemize}
+    \end{itemize}
+\end{definition}
+
+\section{电路元件}
+
+\begin{definition}
+    \textbf{电路元件} 是电路中最基本的组成单元。
+    \begin{itemize}
+        \item 5种基本的理想电路元件
+        \begin{itemize}
+            \item 电阻元件：表示消耗电能的元件
+            \item 电感元件：表示产生磁场，储存磁场能量的元件
+            \item 电容元件：表示产生电场，储存电场能量的元件
+            \item 电压源和电流源：表示将其它形式的能量转变成电能的元件。
+            \item 如果表征元件特性的数学关系式是线性关系，该元件称为线性元件，否则称为非线性元件。
+        \end{itemize}
+        \item 集总参数电路
+        \begin{itemize}
+            \item 由集总元件构成的电路
+            \item 集总元件发生的电磁过程都集中在元件内部进行。
+            \item 集总参数电路
+            \begin{itemize}
+                \item 当电路的几何尺寸远远小于电路中信号的波长时，电路周围的辐射效应很小，可以忽略不计，这时电流的能量完全分布在金属导线和电路元件之内，这样的电路成为集总参数电路。可以认为传送到电路各处的电磁能量同时到达，整个电路为电磁空间的一个点。这类电路就可以用电路模型来描述。
+                \item 集总参数电路中 $u$、$i$ 可以是时间的函数，但与空间坐标无关。因此，任何时刻，流入两端元件一个端子的电流等于从另一端子流出的电流；端子间的电压为单值量。
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
+\end{definition}
+
+\section{电阻元件}
+
+\begin{definition}
+    \textbf{电阻元件的定义} 对电流呈现阻力、消耗能量的元件。其特性可用 $u$～$i$ 平面上的一条曲线来描述：
+    \[
+    f(u, i) = 0
+    \]
+    \textbf{线性时不变电阻元件}
+    \begin{itemize}
+        \item $u$～$i$ 关系满足欧姆定律
+        \item 伏安特性为一条过原点的直线
+    \end{itemize}
+    \textbf{功率和能量}
+    \begin{itemize}
+        \item 公式和参考方向必须配套使用！
+    \end{itemize}
+    \textbf{电阻的开路与短路}
+    \begin{itemize}
+        \item 开路
+        \[
+        i = 0, \quad u \neq 0, \quad R = \infty, \quad G = 0
+        \]
+        \item 短路
+        \[
+        u = 0, \quad i \neq 0, \quad R = 0, \quad G = \infty
+        \]
+    \end{itemize}
+\end{definition}
+
+\section{电压源和电流源}
+
+\begin{definition}
+    1. 理想电压源
+    \textbf{定义}
+    \begin{itemize}
+        \item 电压源两端电压总能保持定值或一定的时间函数，其值与流过它的电流 $i$ 无关的元件叫理想电压源。
+    \end{itemize}
+    \textbf{电路符号}
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[width=0.5\textwidth]{dianya.png}
+    \end{figure}
+    \textbf{理想电压源的电压、电流关系}
+    \begin{itemize}
+        \item 电压源两端电压由电源本身决定，与外电路无关；与流经它的电流方向、大小无关。
+        \item 通过电压源的电流由电压源及外电路共同决定。
+        \item 电压源不能短路！
+    \end{itemize}
+
+    2. 理想电流源
+    \textbf{定义}
+    \begin{itemize}
+        \item 理想电流源的输出电流总能保持定值或一定的时间函数，其值与它的两端电压 $u$ 无关的元件叫理想电流源。
+    \end{itemize}
+    \textbf{电路符号}
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[width=0.5\textwidth]{dianliu.png}
+    \end{figure}
+    \textbf{理想电流源的电压、电流关系}
+    \begin{itemize}
+        \item 电流源的输出电流由电源本身决定，与外电路无关；与它两端电压方向、大小无关。
+        \item 电流源两端的电压由电流源及外电路共同决定。
+        \item 电流源不能开路！
+    \end{itemize}
+\end{definition}
+
+\section{基尔霍夫定律}
+
+\begin{definition}
+    \textbf{基尔霍夫定律包括：}
+    \begin{itemize}
+        \item 基尔霍夫电流定律（Kirchhoff’s Current Law, KCL）
+        \item 基尔霍夫电压定律（Kirchhoff’s Voltage Law, KVL）
+    \end{itemize}
+    \textbf{基尔霍夫定律反映了电路中所有支路电压和电流所遵循的基本规律，是分析集总参数电路的基本定律;}
+    \textbf{基尔霍夫定律（KCL、KVL）与元件特性（Voltage Current Relation, VCR）构成了电路分析的基础。}
+
+    1. 相关名词
+    \begin{itemize}
+        \item 支路
+        \begin{itemize}
+            \item 电路中每一个两端元件就叫一条支路
+            \item 电路中通过同一电流的分支
+        \end{itemize}
+        \item 节点
+        \begin{itemize}
+            \item 元件的连接点称为结点
+            \item 三条以上支路的连接点称为结点
+        \end{itemize}
+        \item 路径
+        \begin{itemize}
+            \item 两结点间的一条通路，由支路构成
+        \end{itemize}
+        \item 回路
+        \begin{itemize}
+            \item 由支路组成的闭合路径
+        \end{itemize}
+        \item 网孔
+        \begin{itemize}
+            \item 对平面电路，其内部不含任何支路的回路称网孔。
+            \item 网孔是回路，但回路不一定是网孔。
+        \end{itemize}
+    \end{itemize}
+
+    2. 基尔霍夫电流定律（KCL）
+    \begin{itemize}
+        \item 在集总参数电路中，任意时刻，对任意结点流出（或流入）该结点电流的代数和等于零。
+    \end{itemize}
+
+    3. 基尔霍夫电压定律（KVL）
+    \begin{itemize}
+        \item 在集总参数电路中，任一时刻，沿任一回路，所有支路电压的代数和恒等于零。
+        \item KVL也适用于电路中任一假想的回路。
+    \end{itemize}
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[width=0.5\textwidth]{kvl.png}
+    \end{figure}
+\end{definition}
+
+
+\chapter{电阻电路的等效变换}
+
+\section{电路的等效变换}
+
+\begin{definition}
+    1.两端电路（网络）
+    任何一个复杂的电路, 向外引出两个端子，且从一个端子流入的
+电流等于从另一端子流出的电流，则称这一电路为二端网络 (或一
+端口网络)。
+
+2.两端电路等效的概念
+两个两端电路，端口具有相同的电压、电流关系,则称它们是等效的
+电路（对外等效）。
+\end{definition}
+
+\section{电阻的串联和并联}
+
+\section{电阻的Y形联接和$\Delta$形联接的等效变换}
+
+\begin{definition}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{bian1.png}
+    \end{figure}
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{bian2.png}
+    \end{figure}
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{bian3.png}
+    \end{figure}
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{bian4.png}
+    \end{figure}
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{bian5.png}
+    \end{figure}
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{bian6.png}
+    \end{figure}
+    
+\end{definition}
+
+\begin{definition}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{bian7.png}
+    \end{figure}
+
+    \begin{enumerate}[left=0pt]
+        \textbf{\textcolor{red}{Attention}}
+        \item 等效对外部（端钮以外）有效，对内不成立。
+        \item 等效电路与外部电路无关。
+        \item 用于简化电路。
+    \end{enumerate}
+\end{definition}
+
+\cleardoublepage
+
+\begin{definition}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{bian8.png}
+    \end{figure}
+\end{definition}
+
+\section{电压源、电流源的串联和并联}
+
+\begin{definition}
+    1.理想电压源的串联和并联
+    相同的理想电压源才能并联,电源中的电流不确定。
+
+    2.理想电流源的串联并联
+    相同的理想电流源才能串联,每个电流源的端电压不能确定。
+\end{definition}
+
+\section{实际电源的两种模型及其等效变换}
+
+\cleardoublepage
+
+\begin{definition}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{sj1.png}
+    \end{figure}
+
+    \vspace{1mm} % 调整图片之间的垂直间距
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{sj2.png}
+    \end{figure}
+
+    \vspace{1mm} % 调整图片之间的垂直间距
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{sj3.png}
+    \end{figure}
+
+    \vspace{1mm} % 调整图片之间的垂直间距
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{sj4.png}
+    \end{figure}
+
+    \vspace{1mm} % 调整图片之间的垂直间距
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{sj5.png}
+    \end{figure}
+\end{definition}
+
+\section{输入电阻}
+
+\begin{definition}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{zu1.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{zu2.png}
+    \end{figure}
+\end{definition}
+
+\chapter{电阻电路的一般分析}
+
+\section{电路的图}
+
+\begin{definition}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{tu1.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{tu2.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{tu3.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{tu4.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{tu5.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{tu6.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{tu7.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{tu8.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{tu9.png}
+    \end{figure}
+\end{definition}
+
+\section{KCL和KVL的独立方程数}
+
+\begin{definition}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{fang1.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{fang2.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{fang3.png}
+    \end{figure}
+\end{definition}
+
+
+\section{支路电流法}
+
+\begin{definition}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{zl1.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{zl2.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{zl3.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{zl4.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{zl5.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{zl6.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{zl7.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{zl8.png}
+    \end{figure}
+\end{definition}
+
+
+\section{网孔电流法}
+
+\begin{definition}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{wl1.png}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{wl2.png}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{wl3.png}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{wl4.png}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{wl5.png}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{wl6.png}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{wl7.png}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{wl8.png}
+    \end{figure}
+\end{definition}
+
+\section{回路电流法}
+
+\begin{definition}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{hl1.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{hl2.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{hl3.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{hl4.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{hl5.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{hl6.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{hl7.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{hl8.png}
+    \end{figure}
+\end{definition}
+
+\section{结点电压法}
+
+\begin{definition}
+    1. 结点电压法
+
+    以结点电压为未知量列写电路方程分析电路的方法。适用于结点较少的电路。
+
+    \textbf{基本思想}：
+    \begin{itemize}
+        \item 选结点电压为未知量，则 KVL 自动满足，无需列写 KVL 方程。各支路电流、电压可视为结点电压的线性组合，求出结点电压后，便可方便地得到各支路电压、电流。
+    \end{itemize}
+
+    \textbf{列写的方程}：
+    \begin{itemize}
+        \item 结点电压法列写的是结点上的 KCL 方程，独立方程数为：$(n - 1)$
+        \begin{enumerate}
+            \item 与支路电流法相比，方程数减少 $b - (n - 1)$ 个。
+            \item 任意选择参考点：其它结点与参考点的电位差即为结点电压（位），方向为从独立结点指向参考结点。
+        \end{enumerate}
+    \end{itemize}
+\end{definition}
+
+\begin{definition}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{jd1.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{jd2.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{jd3.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{jd4.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{jd5.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{jd6.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{jd7.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{jd8.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{jd9.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{jd10.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{jd11.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{jd12.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{jd13.png}
+    \end{figure}
+\end{definition}
+
+
+\chapter{电路定理}
+
+\section{叠加定理}
+
+\begin{definition}
+    1. 叠加定理
+
+    在线性电路中，任一支路的电流（或电压）可以看成是电路中每一个独立电源单独作用于电路时，在该支路产生的电流（或电压）的代数和。
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{dj1.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{dj2.png}
+    \end{figure}
+
+    \textbf{结论}：
+    结点电压和支路电流均为各电源的一次函数，均可看成各独立电源单独作用时产生的响应之叠加。
+
+    \textbf{几点说明}：
+    \begin{enumerate}
+        \item 叠加定理只适用于线性电路。
+        \item 一个电源作用，其余电源为零。
+        \begin{itemize}
+            \item 电压源为零 — 短路。
+            \item 电流源为零 — 开路。
+        \end{itemize}
+    \end{enumerate}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{dj3.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{dj4.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{dj5.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{dj6.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{dj7.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{dj8.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{dj9.png}
+    \end{figure}
+\end{definition}
+
+\cleardoublepage
+
+\section{替代定理}
+
+\begin{definition}
+    1. 替代定理
+
+    对于给定的任意一个电路，若某一支路电压为 $u_k$、电流为 $i_k$，那么这条支路就可以用一个电压等于 $u_k$ 的独立电压源，或者用一个电流等于 $i_k$ 的独立电流源，或用 $R = \frac{u_k}{i_k}$ 的电阻来替代，替代后电路中全部电压和电流均保持原有值（解答唯一）。
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{ti1.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{ti2.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{ti3.png}
+    \end{figure}
+
+    \textbf{原因}：\par
+    替代前后 KCL、KVL 关系相同，其余支路的 $u$、$i$ 关系不变。用 $u_k$ 替代后，其余支路电压不变（KVL），其余支路电流也不变，故第 $k$ 条支路 $i_k$ 也不变（KCL）。用 $i_k$ 替代后，其余支路电流不变（KCL），其余支路电压不变，故第 $k$ 条支路 $u_k$ 也不变（KVL）。
+
+    \textbf{注意}：
+    \begin{enumerate}
+        \item 替代定理既适用于线性电路，也适用于非线性电路。
+    \end{enumerate}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{ti4.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{ti5.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{ti6.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{ti7.png}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{ti8.png}
+    \end{figure}
+\end{definition}
+
+
+\section{戴维宁定理和诺顿定理}
+
+\begin{definition}
+    \foreach \i in {1,...,13} {
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\textwidth]{dai\i.png}
+    \end{figure}
+}
+\end{definition}
+
+
+\section{最大功率传输定理}
+
+\begin{definition}
+    \foreach \i in {1,...,4} {
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\textwidth]{zui\i.png}
+    \end{figure}
+}
+\end{definition}
+
+\section{特勒根定理}
+
+\begin{definition}
+    \foreach \i in {1,...,10} {
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\textwidth]{te\i.png}
+    \end{figure}
+}
+\end{definition}
+
+
+\section{互易定理}
+
+\begin{definition}
+    互易定理
+
+    互易性是一类特殊的线性网络的重要性质。一个具有互易性的网络在输入端（激励）与输出端（响应）互换位置后，同一激励所产生的响应并不改变。具有互易性的网络叫互易网络，互易定理是对电路的这种性质所进行的概括，它广泛的应用于网络的灵敏度分析和测量技术等方面。
+
+    \textbf{1. 互易定理}：
+
+    对一个仅含电阻的二端口电路 NR，其中一个端口加激励源，一个端口作响应端口，在只有一个激励源的情况下，当激励与响应互换位置时，同一激励所产生的响应相同。
+\end{definition}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{hu1.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{hu2.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{hu3.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{hu4.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{hu5.png}
+\end{figure}
+
+\textbf{应用互易定理分析电路时应注意}：
+\begin{enumerate}
+    \item 互易前后应保持网络的拓扑结构不变，仅理想电源搬移；
+    \item 互易前后端口处的激励和响应按照关联参考方向推导的；
+    \item 互易定理只适用于线性电阻网络在单一电源激励下，端口两个支路电压电流关系。
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{hu6.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{hu7.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{hu8.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{hu9.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{hu10.png}
+\end{figure}
+
+
+
+\section{储能元件(第六章)}
+
+\subsection{电容元件}
+
+\begin{definition}
+    \foreach \i in {1,...,18} {
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\textwidth]{rong\i.png}
+    \end{figure}
+}
+\end{definition}
+
+
+
+
+\subsection{电感元件}
+
+
+\begin{definition}
+    \foreach \i in {1,...,11} {
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\textwidth]{gan\i.png}
+    \end{figure}
+}
+\end{definition}
+
+\subsection{电容、电感元件的串联与并联}
+
+\begin{definition}
+    \foreach \i in {1,...,9} {
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\textwidth]{rg\i.png}
+    \end{figure}
+}
+\end{definition}
+
+\begin{definition}
+    以上虽然是关于两个电容或两个电感的串联和并联等效，但其结论可以推广到 n 个电容或 n 个电感的串联和并联等效。
+\end{definition}
+
+
+
+\chapter{一阶电路的时域分析}
+
+\section{动态电路的方程及其初始条件}
+
+1.动态电路
+含有动态元件电容和电感的电路称动态电路。
+特点
+当动态电路状态发生改变时（换路）需要经历一个变化过程才
+能达到新的稳定状态。这个变化过程称为电路的过渡过程。
+
+\begin{definition}
+    \foreach \i in {1,...,23} {
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\textwidth]{dong\i.png}
+    \end{figure}
+}
+\end{definition}
+
+\section{一阶电路的零输入响应}
+
+\begin{definition}
+    \foreach \i in {1,...,18} {
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\textwidth]{ling\i.png}
+    \end{figure}
+}
+\end{definition}
+
+\end{document}
